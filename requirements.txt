@@ -1,0 +1,10 @@
+line-profiler-pycharm==1.1.0
+numpy
+torch
+tensorboard
+opencv-python
+gymnasium
+gymnasium[atari]
+gymnasium[accept-rom-license]
+git+https://github.com/cobets/dots-env@main
+
