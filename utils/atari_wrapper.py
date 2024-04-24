@@ -1,4 +1,4 @@
-import gym
+import gymnasium as gym
 import numpy as np
 import cv2
 
@@ -17,9 +17,12 @@ class EnvWrapper(gym.Wrapper):
     def step(self, action):
         sum_of_rewards = 0.0
         terminal = False
+        truncated = False
+        info = None
 
         for _ in range(self.skip):
-            observation, reward, terminal, info = self.env.step(action)
+            observation, reward, terminal, truncated, info = self.env.step(action)
+            truncated = info['episode_frame_number'] > 500
             sum_of_rewards += reward
             if self.penalty:
                 sum_of_rewards += self.ale.lives() - self.lives
@@ -29,7 +32,8 @@ class EnvWrapper(gym.Wrapper):
 
         if not terminal and sum_of_rewards < 0:
             for _ in range(self.steps_after_negative_reward):
-                observation, _, terminal, info = self.env.step(self.env.action_space.sample())
+                v = self.env.step(self.env.action_space.sample())
+                observation, _, terminal, truncated, into = v
         
         if int(sum_of_rewards) == 0:
             self.current_step += 1
@@ -38,12 +42,12 @@ class EnvWrapper(gym.Wrapper):
         else:
             self.current_step = 0
 
-        return observation, sum_of_rewards, terminal, info
+        return observation, sum_of_rewards, terminal or truncated, info
 
     def reset(self):
         observation = self.env.reset()
         for _ in range(self.steps_after_reset):
-            observation, _, _, _ = self.env.step(self.env.action_space.sample())
+            observation, _, _, _, _ = self.env.step(self.env.action_space.sample())
         self.lives = self.ale.lives()
         self.current_step = 0
         return observation
@@ -73,6 +77,11 @@ class PreProcessWrapper(gym.ObservationWrapper):
         self.buffer[1:] = self.buffer[:3]
         self.buffer[0] = observation / self.denominator
         return self.buffer
+
+    def step(self, action):
+        observation, reward, terminated, info = self.env.step(action)
+        return self.observation(observation), reward, terminated, info
+
 
 def create_env(env_name = 'Pong-v0', y1 = 0, y2 = 210, x1 = 0, x2 = 160,
                penalty = False, denominator = 255.0, skip = 4,

@@ -1,6 +1,8 @@
 import torch
 import torch.nn.functional as F
 import numpy as np
+from line_profiler_pycharm import profile
+
 from utils.model import support_to_scalar, normalize_output
 
 class MCTS:
@@ -33,6 +35,7 @@ class MCTS:
         action_values = self.order_actions / float(count_of_actions)
         self.action_t += action_values.view(-1, 1, 1, 1)
 
+    @profile
     def run(self, observations, model, training = False, value_support = 3, reward_support = 1):
         # creating tensor structure of tree
         count_of_obs = len(observations)

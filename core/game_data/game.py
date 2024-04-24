@@ -31,6 +31,7 @@ class Game:
 
         obs, reward, terminal, _ = self.env.step(action)
         obs = torch.from_numpy(obs).float()
+        self.states.append(obs)
 
         self.rewards.append(max(min(reward, 1.0), -1.0))
         self.score += reward 

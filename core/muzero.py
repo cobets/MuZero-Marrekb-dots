@@ -1,18 +1,21 @@
 from copy import deepcopy
-import numpy as np
 import torch
 import torch.nn.functional as F
-from torch.multiprocessing import Process, Pipe
+from line_profiler_pycharm import profile
+
 from utils.stats import MovingAverageScore, write_to_file
 from utils.model import scalar_to_support
 from core.game_data.game import Game
+
 
 def cross_loss(pred, targ):
     probs = F.log_softmax(pred, dim = -1)
     return torch.sum(- targ * probs, dim = 1).mean()
 
+
 def scale_gradient(x, ratio):
     return ratio * x + (1 - ratio) * x.detach()
+
 
 class MuZero:
     def __init__(self, model, optimizer, buffer, mcts, value_support = 3,
@@ -37,8 +40,8 @@ class MuZero:
         self.update_target_iteration = update_target_iteration
         self.update_t_iteration = update_t_iteration
         self.min_t = min_t
-        
 
+    @profile
     def train(self, env_params, env_func, count_of_actions,
               count_of_envs = 10, max_env_steps = 1e8,
               input_dimension = (4, 96, 96)):
@@ -87,7 +90,7 @@ class MuZero:
                     self.buffer.store(
                         len(game.rewards),
                         torch.stack(game.states),
-                        torch.stack(game.actions).view(-1, 1),
+                        torch.tensor(game.actions).view(-1, 1),
                         torch.tensor(game.rewards).view(-1, 1),
                         torch.tensor(game.non_terminals),
                         torch.stack(game.policies),
