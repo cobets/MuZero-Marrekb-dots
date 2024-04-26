@@ -159,7 +159,7 @@ class MCTS:
                 t_Q[node_indices, node_actions] = (q_n + values[indices]) / n
                 t_N[node_indices, node_actions] = n
 
-        n = t_N[root_indices]**self.T
+        n = t_N[root_indices] # **self.T
         n_sum = torch.sum(n, dim = 1).float().view(-1, 1)
         root_policies = (n / n_sum)
 
