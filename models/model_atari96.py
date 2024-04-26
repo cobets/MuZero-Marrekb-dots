@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from utils.init import init_orthogonal_head, init_orthogonal_features
-from utils.model import ResidualBlock, normalize_output
+from .init import init_orthogonal_head, init_orthogonal_features
+from .model import ResidualBlock, normalize_output
+
 
 class ValueModel(nn.Module):
     def __init__(self, value_support):

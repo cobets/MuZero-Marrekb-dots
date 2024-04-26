@@ -1,5 +1,5 @@
 import torch
-from utils.model import support_to_scalar
+from models.model import support_to_scalar
 
 class ExperienceReplay:
     def __init__(self, buffer_size, batch_size, count_of_actions,

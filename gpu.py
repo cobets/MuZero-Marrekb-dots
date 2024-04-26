@@ -3,7 +3,8 @@ import torch.nn.functional as F
 import numpy as np
 from line_profiler_pycharm import profile
 
-from utils.model import support_to_scalar, normalize_output
+from models.model import support_to_scalar
+
 
 class MCTS:
     def __init__(self, count_of_actions, filters = 256, features_dim = (6, 6),

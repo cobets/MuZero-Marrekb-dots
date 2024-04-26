@@ -1,10 +1,10 @@
 import os
 import torch
-from core.muzero import MuZero
-from core.mcts.gpu import MCTS
-from core.buffer.base_buffer import ExperienceReplay
+from muzero import MuZero
+from gpu import MCTS
+from base_buffer import ExperienceReplay
 from models.model_atari96 import Model
-from utils.atari_wrapper import create_env
+from atari_wrapper import create_env
 
 if __name__ == '__main__':
     name = 'mz96'
